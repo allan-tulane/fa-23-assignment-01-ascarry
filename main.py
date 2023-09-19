@@ -5,13 +5,24 @@ See assignment-01.pdf for details.
 # no imports needed.
 
 def foo(x):
-    ### TODO
+  if x<=1:
+    return x
+  else:
+    return foo(x-1) +  foo(x-2)
     pass
 
 def longest_run(mylist, key):
-    ### TODO
-    pass
-
+  i = 0 
+  s = 0 
+  for num in mylist:
+    if num == key:
+      i += 1
+    else:
+      i = 0
+    if i > s:
+      s = i
+  return s
+  pass
 
 class Result:
     """ done """
@@ -27,8 +38,43 @@ class Result:
     
     
 def longest_run_recursive(mylist, key):
-    ### TODO
-    pass
+  if len(mylist) == 1 and mylist[0] == key:
+    return Result(1, 1, 1, True)
+  if len(mylist) == 1 and mylist[0] != key:
+    return Result(0, 0, 0, False)
+  pass
+
+  left = longest_run_recursive(mylist[:len(mylist)//2], key)
+  right = longest_run_recursive(mylist[len(mylist)//2:], key)
+
+  if left.is_entire_range and right.is_entire_range:
+    run = left.longest_size + right.longest_size 
+    return Result(left.left_size + left.right_size, 
+                  right.left_size + right.right_size, run, True)
+
+  elif left.is_entire_range: 
+    if (right.left_size + left.longest_size) <= left.longest_size:
+      run = left.longest_size
+    else:
+      run = right.left_size + left.longest_size
+    return Result(left.left_size + right.left_size, right.right_size, run, False)
+
+  elif right.is_entire_range:
+    if (left.right_size + right.longest_size) <= right.longest_size:
+      run = right.longest_size
+    else:
+      run = left.right_size + right.longest_size
+    return Result(left.left_size, right.right_size + left.right_size, run, False)
+
+  else:
+    if (left.right_size + right.left_size) < right.longest_size:
+      run = right.longest_size
+    elif (left.right_size + right.left_size) < left.longest_size:
+      run = left.longest_size
+    else:
+      run = left.right_size + right.left_size
+    return Result(left.left_size, right.right_size, run, False)
+
 
 ## Feel free to add your own tests here.
 def test_longest_run():
